@@ -40,7 +40,7 @@ nj::Result nj::Import::eval(vector<shared_ptr<nj::Value>> &args,int64_t exprId)
          string *s = unfilteredNames.ptr() + i;
          jl_value_t *val = jl_get_global(module,jl_symbol(s->c_str()));
 
-         if(val && jl_is_function(val)) filteredNames.push_back(*s);
+         if(val && jl_is_method(val)) filteredNames.push_back(*s);
       }
 
       vector<size_t> dims;

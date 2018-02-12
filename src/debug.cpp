@@ -24,12 +24,12 @@ string nj::getTypeName(jl_value_t *v)
      if(jl_is_expr(v)) ss << "value is expr";
      if(jl_is_tuple(v)) ss << "value is tuple";
      if(jl_is_vararg_type(v)) ss << "value is vararg";
-     if(jl_is_function(v)) ss << "value is func";
-     if(jl_is_byte_string(v)) ss << "value is string";
+     if(jl_is_method(v)) ss << "value is func";
+     if(jl_is_string(v)) ss << "value is string";
      if(jl_is_uniontype(v)) ss << "value is union";
-     if(jl_is_typector(v)) ss << "value is ctor";
+     if(jl_is_unionall(v)) ss << "value is unionall";
      if(jl_is_symbol(v)) ss << "value is jl_is_symbol";
-     if(jl_is_lambda_info(v)) ss << "value is jl_is_lambda_info";
+     if(jl_is_code_info(v)) ss << "value is jl_is_code_info";
      if(jl_is_vararg_type(v)) ss << "value is jl_is_vararg_type";
      //if(jl_is_getfieldnode(v)) ss << "value is jl_is_getfieldnode";
      if(jl_is_datatype(jl_typeof(v))) ss << "value is a data type";

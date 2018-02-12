@@ -211,7 +211,7 @@ int64_t nj::Kernel::preserve(jl_value_t *val) throw(JuliaException)
 
    if(freelist_start == -1)
    {
-      jl_cell_1d_push((jl_array_t*)preserve_array,val);
+      jl_array_ptr_1d_push((jl_array_t*)preserve_array,val);
       freelist.push_back(-1);
       free_index = freelist.size() - 1;
    }
@@ -220,7 +220,7 @@ int64_t nj::Kernel::preserve(jl_value_t *val) throw(JuliaException)
       free_index = freelist_start;
       freelist_start = freelist[free_index];
       freelist[free_index] = -1;
-      jl_cellset(preserve_array,free_index,val);
+      jl_array_ptr_set(preserve_array,free_index,val);
    }
 
    jl_value_t *ex = jl_exception_occurred();
@@ -237,12 +237,12 @@ jl_value_t *nj::Kernel::free(int64_t valIndex) throw(JuliaException)
    freelist[valIndex] = freelist_start;
    freelist_start = valIndex;
 
-   jl_value_t *val = jl_cellref(preserve_array,valIndex);
+   jl_value_t *val = jl_array_ptr_ref(preserve_array,valIndex);
    jl_value_t *ex = jl_exception_occurred();
 
    if(ex) throw getJuliaException(ex);
    freelist_index.erase(val);
-   jl_cellset(preserve_array,valIndex,0);
+   jl_array_ptr_set(preserve_array,valIndex,0);
    ex = jl_exception_occurred();
    if(ex) throw getJuliaException(ex);
    return val;
@@ -252,7 +252,7 @@ jl_value_t *nj::Kernel::get(int64_t valIndex) throw(JuliaException)
 {
    if(!preserve_array) preserve_array = get_preserve_array();
 
-   jl_value_t *val = jl_cellref(preserve_array,valIndex);
+   jl_value_t *val = jl_array_ptr_ref(preserve_array,valIndex);
    jl_value_t *ex = jl_exception_occurred();
 
    if(ex) throw getJuliaException(ex);

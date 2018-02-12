@@ -38,7 +38,7 @@ static string errorExceptionMsg(jl_value_t *ex)
    jl_value_t *f0 = jl_get_nth_field(ex,0);
    stringstream ss;
 
-   ss << jl_iostr_data(f0);
+   ss << jl_string_data(f0);
 
    return ss.str();
 }
@@ -127,7 +127,7 @@ static string loadErrorMsg(jl_value_t *ex)
    jl_value_t *f2 = jl_get_nth_field(ex,2);
    stringstream ss;
 
-   ss << "loading " << jl_iostr_data(f0) << " line " << jl_unbox_int64(f1) <<  " " << errorMsg(f2);
+   ss << "loading " << jl_string_data(f0) << " line " << jl_unbox_int64(f1) <<  " " << errorMsg(f2);
 
    return ss.str();
 }
@@ -143,7 +143,7 @@ static string systemErrorMsg(jl_value_t *ex)
    jl_value_t *f1 = jl_get_nth_field(ex,1);
    stringstream ss;
 
-   ss << jl_iostr_data(f0) << " errno = " << jl_unbox_int64(f1);
+   ss << jl_string_data(f0) << " errno = " << jl_unbox_int64(f1);
 
    return ss.str();
 }
@@ -187,7 +187,7 @@ shared_ptr<nj::Exception> nj::genJuliaError(jl_value_t *ex)
       else if(jl_typeis(ex,jl_undefvarerror_type)) njEx = genJuliaUndefVarError(ex);
       else if(jl_typeis(ex,jl_loaderror_type)) njEx = genJuliaLoadError(ex);
       else if(jl_typeis(ex,etypes["SystemError"])) njEx = genJuliaSystemError(ex);
-      else if(jl_is_ascii_string(ex) || jl_is_utf8_string(ex)) ss << jl_string_data(ex);
+      else if(jl_is_string(ex)) ss << jl_string_data(ex);
       else njEx = shared_ptr<Exception>(new InvalidException(trace[0]));
 
       for(size_t i = 1;i < trace.size();i++)

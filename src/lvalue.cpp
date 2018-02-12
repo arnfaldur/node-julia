@@ -156,7 +156,7 @@ void getNamedTypeValue(jl_value_t *from,shared_ptr<nj::Value> &value) throw(nj::
    if(juliaTypename == JuliaFunction) return;
    if(juliaTypename == JuliaSubString)
    {
-      jl_value_t *utf = convertValue(from,jl_utf8_string_type);
+      jl_value_t *utf = convertValue(from,jl_string_type);
 
       if(utf) value.reset(new nj::UTF8String(jl_string_data(utf)));
    }
@@ -174,7 +174,7 @@ void getNamedTypeValue(jl_value_t *from,shared_ptr<nj::Value> &value) throw(nj::
    else value.reset(new nj::JuliaHandle(from,true));
 }
 
-static jl_value_t *convertArray(jl_value_t *from,jl_datatype_t *destElementType)
+static jl_value_t *convertArray(jl_value_t *from,jl_value_t *destElementType)
 {
    if(!juliaConvert) juliaConvert = jl_get_function(jl_base_module,"convert");
    if(juliaConvert)
@@ -208,8 +208,7 @@ static shared_ptr<nj::Value> getArrayValue(jl_value_t *Ainput)
    else if(elementType == (jl_value_t*)jl_int16_type) value = arrayFromBuffer<short,nj::Int16_t>(Ainput);
    else if(elementType == (jl_value_t*)jl_uint8_type) value = arrayFromBuffer<unsigned char,nj::UInt8_t>(Ainput);
    else if(elementType == (jl_value_t*)jl_uint16_type) value = arrayFromBuffer<unsigned short,nj::UInt16_t>(Ainput);
-   else if(elementType == (jl_value_t*)jl_ascii_string_type) value = arrayFromElements<string,nj::ASCIIString_t,getSTDStringFromJuliaString>(Ainput);
-   else if(elementType == (jl_value_t*)jl_utf8_string_type) value = arrayFromElements<string,nj::UTF8String_t,getSTDStringFromJuliaString>(Ainput);
+   else if(elementType == (jl_value_t*)jl_string_type) value = arrayFromElements<string,nj::UTF8String_t,getSTDStringFromJuliaString>(Ainput);
    else if(elementType == (jl_value_t*)JVOID_T) value = arrayOfNull(Ainput);
    else if(elementType == (jl_value_t*)jl_any_type && jl_array_size(Ainput,0) == 0) value = arrayOfNull(Ainput);
    else
@@ -220,7 +219,7 @@ static shared_ptr<nj::Value> getArrayValue(jl_value_t *Ainput)
       if(!juliaTypename) return 0;
       if(juliaTypename == JuliaSubString)
       {
-         jl_value_t *utfArray = convertArray(Ainput,jl_utf8_string_type);
+         jl_value_t *utfArray = convertArray(Ainput,(jl_value_t*)jl_string_type);
 
          if(utfArray) value = arrayFromElements<string,nj::UTF8String_t,getSTDStringFromJuliaString>(utfArray);
       }
@@ -285,13 +284,12 @@ void addLValueElements(jl_value_t *jlVal,vector<shared_ptr<nj::Value>> &res) thr
    {
       shared_ptr<nj::Value> value;
 
-      if(jl_is_float64(jlVal)) value.reset(new nj::Float64(jl_unbox_float64(jlVal)));
+      if(jl_typeis(jlVal, jl_float64_type)) value.reset(new nj::Float64(jl_unbox_float64(jlVal)));
       else if(jl_is_int64(jlVal)) value.reset(new nj::Int64(jl_unbox_int64(jlVal)));
       else if(jl_is_int32(jlVal)) value.reset(new nj::Int32(jl_unbox_int32(jlVal)));
       else if(jl_is_int8(jlVal)) value.reset(new nj::Int8(jl_unbox_int8(jlVal)));
-      else if(jl_is_utf8_string(jlVal)) value.reset(new nj::UTF8String(jl_string_data(jlVal)));
-      else if(jl_is_ascii_string(jlVal)) value.reset(new nj::ASCIIString(jl_string_data(jlVal)));
-      else if(jl_is_float32(jlVal)) value.reset(new nj::Float32(jl_unbox_float32(jlVal)));
+      else if(jl_is_string(jlVal)) value.reset(new nj::UTF8String(jl_string_data(jlVal)));
+      else if(jl_typeis(jlVal, jl_float32_type)) value.reset(new nj::Float32(jl_unbox_float32(jlVal)));
       else if(jl_is_uint64(jlVal)) value.reset(new nj::UInt64(jl_unbox_uint64(jlVal)));
       else if(jl_is_uint32(jlVal)) value.reset(new nj::UInt32(jl_unbox_uint32(jlVal)));
       else if(jl_is_int16(jlVal)) value.reset(new nj::Int16(jl_unbox_int16(jlVal)));

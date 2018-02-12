@@ -1,10 +1,10 @@
 #ifndef __juliav
 #define __juliav
 
-extern "C"
-{
+//extern "C"
+//{
 #include <julia.h>
-}
+//}
 
 /*************************************************************/
 /* Some things that need to be defined differently depending */

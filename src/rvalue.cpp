@@ -148,7 +148,7 @@ static jl_value_t *rPrimitive(const nj::Primitive &prim) throw(nj::JuliaExceptio
 
 jl_array_t *zeroLengthArray(jl_datatype_t *jl_element_type) throw(nj::JuliaException)
 {
-   jl_value_t *atype = jl_apply_array_type(jl_element_type,1);
+   jl_value_t *atype = jl_apply_array_type((jl_value_t*)jl_element_type,1);
    vector<jl_value_t*> argv;
    nj::Kernel *kernel = nj::Kernel::getSingleton();
 
@@ -173,7 +173,7 @@ template<typename V,typename E> jl_array_t *arrayFromBuffer(const shared_ptr<nj:
    }
    else
    {
-      jl_value_t *atype = jl_apply_array_type(jl_element_type,A.dims().size());
+      jl_value_t *atype = jl_apply_array_type((jl_value_t*)jl_element_type,A.dims().size());
       vector<jl_value_t*> argv;
 
       for(size_t dim: A.dims()) argv.push_back(jl_box_long(dim));
@@ -197,7 +197,7 @@ jl_value_t *getJuliaStringFromSTDString(const string &s)
 template <typename V,typename E,jl_value_t *(&getElement)(const V&)> jl_array_t *arrayFromElements(const shared_ptr<nj::Value> &val,jl_datatype_t *jl_element_type)
 {
    const nj::Array<V,E> &A = static_cast<nj::Array<V,E>&>(*val);
-   jl_value_t *atype = jl_apply_array_type(jl_element_type,A.dims().size());
+   jl_value_t *atype = jl_apply_array_type((jl_value_t*)jl_element_type,A.dims().size());
    vector<jl_value_t*> argv;
    nj::Kernel *kernel = nj::Kernel::getSingleton();
 
@@ -232,8 +232,7 @@ jl_array_t *rArray(const shared_ptr<nj::Value> &array) throw(nj::JuliaException)
       case nj::float32_type: res = arrayFromBuffer<float,nj::Float32_t>(array,jl_float32_type); break;
       case nj::int8_type: res = arrayFromBuffer<char,nj::Int8_t>(array,jl_int8_type); break;
       case nj::uint8_type: res = arrayFromBuffer<unsigned char,nj::UInt8_t>(array,jl_uint8_type); break;
-      case nj::ascii_string_type: res = arrayFromElements<string,nj::ASCIIString_t,getJuliaStringFromSTDString>(array,jl_ascii_string_type); break;
-      case nj::utf8_string_type: res = arrayFromElements<string,nj::UTF8String_t,getJuliaStringFromSTDString>(array,jl_utf8_string_type); break;
+      case nj::utf8_string_type: res = arrayFromElements<string,nj::UTF8String_t,getJuliaStringFromSTDString>(array,jl_string_type); break;
       case nj::date_type:
       {
          nj::Kernel *kernel = nj::Kernel::getSingleton();
