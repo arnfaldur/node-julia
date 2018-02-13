@@ -122,13 +122,23 @@
                  "-ljulia"
                ]
              },
+		   ],
+		   ["OS=='win'",
              {
                "libraries":
                [
                  "-llibjulia"
                ]
              }
-           ]
+           ],
+		   ["OS == 'linux'",
+		     {
+			   "libraries":
+			   [
+			     "-ljulia"
+ 			   ]
+			 }
+		   ]
          ]
       },
       "conditions":
