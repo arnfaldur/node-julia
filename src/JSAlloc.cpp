@@ -7,7 +7,7 @@ using namespace std;
 map<int,vector<v8::UniquePersistent<v8::Object>>> *nj::JSAlloc::obj_map;
 map<int,vector<shared_ptr<nj::Alloc>>> *nj::JSAlloc::alloc_map;
 
-void nj::JSAlloc::CollectWeak(const v8::WeakCallbackData<v8::Object,JSAlloc> &data)
+void nj::JSAlloc::CollectWeak(const v8::WeakCallbackInfo<JSAlloc> &data)
 {
    JSAlloc *L = data.GetParameter();
 
@@ -65,7 +65,7 @@ shared_ptr<nj::Alloc> nj::JSAlloc::find(const v8::Local<v8::Object> &obj)
 
 nj::JSAlloc::JSAlloc(const v8::Local<v8::Object> &obj):Alloc(),_obj(v8::Isolate::GetCurrent(),obj)
 {
-   _obj.SetWeak(this,CollectWeak);
+   _obj.SetWeak(this,CollectWeak,v8::WeakCallbackType::kParameter);
 }
 
 nj::JSAlloc::~JSAlloc()

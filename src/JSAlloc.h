@@ -14,7 +14,7 @@ namespace nj
          static std::map<int,std::vector<v8::UniquePersistent<v8::Object>>> *obj_map;
          static std::map<int,std::vector<std::shared_ptr<Alloc>>> *alloc_map;
 
-         static void CollectWeak(const v8::WeakCallbackData<v8::Object,JSAlloc> &data);
+         static void CollectWeak(const v8::WeakCallbackInfo<JSAlloc> &data);
 
          v8::UniquePersistent<v8::Object> _obj;
 

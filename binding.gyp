@@ -39,7 +39,7 @@
           ],
           [ "OS=='win'",
             {
-              "juliaLib":"<(juliaBase)/bin",
+              "juliaLib":"<(juliaBase)\\bin",
               "juliaInclude":"<(juliaBase)/include/julia",
               "libjulialib":"libjulia.lib"
             },
@@ -93,6 +93,7 @@
       [
          '<(OS)',
          'NJ_LIB="<(NJ_LIB)"',
+         'JULIA_ENABLE_THREADING=1',
          'JULIA_LIB="<(JULIA_LIB)"',
          'V8MAJOR=<(V8MAJOR)',
          'V8MINOR=<(V8MINOR)',
@@ -124,7 +125,7 @@
              {
                "libraries":
                [
-                 "-ljulia"
+                 "-llibjulia"
                ]
              }
            ]
