@@ -102,8 +102,7 @@ void JMain::operator()()
       jl_options.handle_signals = JL_OPTIONS_HANDLE_SIGNALS_OFF;
       #endif
 
-      if(install_directory == "") jl_init();
-      else jl_init_with_image((char*)install_directory.c_str(),(char*)getSysImageName().c_str());
+       jl_init();
 
       #ifdef JL_SET_STACK_BASE
       JL_SET_STACK_BASE;
@@ -133,11 +132,7 @@ void JMain::operator()()
             if(deactivated) done = true;
          }
       }
-
-//#if defined(JULIA_VERSION_MINOR) && JULIA_VERSION_MINOR == 4
-//      jl_atexit_hook();
-//#endif
-
+       jl_atexit_hook(0);
    }
 }
 

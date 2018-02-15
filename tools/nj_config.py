@@ -87,7 +87,7 @@ def get_julia_lib(operating_system):
       if len(which_julia) > 0 and (operating_system != "linux" or platform.linux_distribution()[0] != ""):
          julia_path = os.path.realpath(which_julia)
          version = julia_version(julia_path)
-         if version == "0.4" or version == "0.5":
+         if version == "0.4" or version == "0.5" or version == "0.6" or version == "0.7":
             path = subprocess.Popen([julia_path,"-e",'println(abspath(dirname(Libdl.dlpath("libjulia"))))'],stdout=subprocess.PIPE).communicate()[0].rstrip(os.linesep)
          else:
             path = re.sub(r"\\ "," ",find_julia_base(operating_system))
@@ -120,6 +120,7 @@ def get_gcc_target():
       line = output.split("\n")[3]
       target = line.split()[1]
    return target
+
 
 if sys.argv[2] == "version": print node_version()
 elif sys.argv[2] == "base":

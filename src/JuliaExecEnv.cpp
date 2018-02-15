@@ -12,7 +12,7 @@
 
 using namespace std;
 
-JuliaExecEnv *JuliaExecEnv::singleton = 0;
+JuliaExecEnv *JuliaExecEnv::singleton = nullptr;
 
 JuliaExecEnv *JuliaExecEnv::getSingleton()
 {
@@ -23,7 +23,7 @@ JuliaExecEnv *JuliaExecEnv::getSingleton()
       singleton = new JuliaExecEnv();
       argv[0] = JULIA_LIB;
       singleton->engine->initialize(1,argv);
-      singleton->trampoline->initialize(0,0);
+      singleton->trampoline->initialize(0, nullptr);
    }
    return singleton;
 }
@@ -37,7 +37,7 @@ JuliaExecEnv::JuliaExecEnv()
 // to global scope.
 
 #if linux
-   (void)dlopen(JULIA_LIB "/libjulia.so",RTLD_GLOBAL|RTLD_NOW);
+   (void)dlopen("/usr/lib/libjulia.so",RTLD_GLOBAL|RTLD_NOW);
 #endif
 
    engine = new JMain();

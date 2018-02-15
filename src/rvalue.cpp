@@ -30,7 +30,7 @@ jl_value_t *getJuliaRegexFromString(const string &val) throw(nj::JuliaException)
 
 static jl_value_t *rPrimitive(const nj::Primitive &prim) throw(nj::JuliaException)
 {
-   jl_value_t *res = 0;
+   jl_value_t *res = nullptr;
 
    switch(prim.type()->id())
    {

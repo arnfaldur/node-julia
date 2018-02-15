@@ -17,7 +17,7 @@ nj::Result nj::Immediate::eval(vector<shared_ptr<nj::Value>> &args,int64_t exprI
    if(args.size() != 1 || !args[0]->isPrimitive()) return Result(res,exprId);
 
    Primitive &text = static_cast<Primitive&>(*args[0]);
-   jl_value_t *jl_res = (jl_value_t*)jl_eval_string((char*)text.toString().c_str());
+   jl_value_t *jl_res = jl_eval_string((char*)text.toString().c_str());
    jl_value_t *jl_ex = jl_exception_occurred();
   
    if(jl_ex)

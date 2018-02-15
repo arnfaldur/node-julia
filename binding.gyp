@@ -16,9 +16,9 @@
                 "gcc":""
               }
             ]
-          ],
-          "juliaBase":"<!(python tools/nj_config.py <(OS) base)"
+          ]
         },
+        "juliaBase":"<!(python tools/nj_config.py <(OS) base)",
         "version":"<!(python tools/nj_config.py <(OS) version)",
         "NJ_LIB":"<!(python tools/nj_config.py <(OS) nj_lib_define)",
         "juliaBin":"<(juliaBase)/bin",
@@ -88,18 +88,19 @@
         "src/rvalue.cpp",
         "src/util.cpp"
       ],
-      "cflags!":     [ "-fno-exceptions" ],
+	  "cflags": [ "<!(julia <(juliaBase)/share/julia/julia-config.jl --cflags)" ],
+	  "cflags!": [ "-fno-exceptions" ],
       "defines":
       [
          '<(OS)',
          'NJ_LIB="<(NJ_LIB)"',
-         'JULIA_ENABLE_THREADING=1',
          'JULIA_LIB="<(JULIA_LIB)"',
          'V8MAJOR=<(V8MAJOR)',
          'V8MINOR=<(V8MINOR)',
          'V8PATCH=<(V8PATCH)'
       ],
-      "cflags_cc!":  [ "-fno-exceptions" ],
+	  "cflags_cc": [ "<!(julia <(juliaBase)/share/julia/julia-config.jl --cflags)" ],
+	  "cflags_cc!": [ "-fno-exceptions" ],
       "include_dirs":
       [
          "<(juliaInclude)"
@@ -108,8 +109,8 @@
       {
          "ldflags":
          [
-            "-L<(juliaLib)",
-            "-Wl,-rpath,<(juliaLib)"
+			"<!(julia <(juliaBase)/share/julia/julia-config.jl --ldflags)",
+			"<!(julia <(juliaBase)/share/julia/julia-config.jl --ldlibs)",
          ],
          "conditions":
          [
@@ -123,22 +124,6 @@
                ]
              },
 		   ],
-		   ["OS=='win'",
-             {
-               "libraries":
-               [
-                 "-llibjulia"
-               ]
-             }
-           ],
-		   ["OS == 'linux'",
-		     {
-			   "libraries":
-			   [
-			     "-ljulia"
- 			   ]
-			 }
-		   ]
          ]
       },
       "conditions":

@@ -550,7 +550,7 @@ void doEval(const FunctionCallbackInfo<Value> &args)
    {
       if(!useCallback)
       {
-         engine->eval(*text);
+         engine->eval((string)(*text));
 
          shared_ptr<nj::Result> res = engine->syncQueueGet();
 
