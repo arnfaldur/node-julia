@@ -101,8 +101,12 @@ void JMain::operator()()
       #if defined(JL_OPTIONS_HANDLE_SIGNALS_OFF)
       jl_options.handle_signals = JL_OPTIONS_HANDLE_SIGNALS_OFF;
       #endif
-
+#if linux
        jl_init();
+#endif
+#ifdef WIN32
+       jl_init_with_image(JULIA_LIB, "sys.dll");
+#endif
 
       #ifdef JL_SET_STACK_BASE
       JL_SET_STACK_BASE;

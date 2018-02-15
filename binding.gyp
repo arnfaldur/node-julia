@@ -94,6 +94,7 @@
       [
          '<(OS)',
          'NJ_LIB="<(NJ_LIB)"',
+         'JULIA_ENABLE_THREADING=1',
          'JULIA_LIB="<(JULIA_LIB)"',
          'V8MAJOR=<(V8MAJOR)',
          'V8MINOR=<(V8MINOR)',
@@ -123,7 +124,11 @@
                  "-ljulia"
                ]
              },
-		   ],
+             "OS == 'win'",
+             {
+              "libraries": [ "-llibjulia" ]
+             }
+		       ],
          ]
       },
       "conditions":
