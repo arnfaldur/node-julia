@@ -3,7 +3,8 @@ node-julia
 
 [![Build Status](https://travis-ci.org/waTeim/node-julia.svg?branch=master)](https://travis-ci.org/waTeim/node-julia)
 
-Fast and simple access to Julia embedded in node. This is a work in progress fork for development of compatibility with newer versions of Julia and node.js.
+Fast and simple access to Julia embedded in node.
+Note: This is a work in progress fork for development of compatibility with newer versions of Julia and node.js.
 
 # Installation
 
