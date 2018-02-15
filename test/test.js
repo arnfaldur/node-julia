@@ -67,7 +67,7 @@ describe('Regression Tests',function()
 
    it('version',function()
    {
-      expect(julia.eval('VERSION.minor')).to.within(3,5);
+      expect(julia.eval('VERSION.minor')).to.within(3,7);
    });
 
    it('eval max 32 bit Integer (4294967296)',function()
@@ -165,7 +165,7 @@ describe('Regression Tests',function()
       // Keep Core.include for the time being.  This should be unnecessary, but
       // currently is.  Once the libuv problems are resolved, Core.include
       // can be shortened to simply include.
-      expect(julia.eval('Core.include("test/inc1.jl")')).to.equal(true);
+      expect(julia.eval('include("test/inc1.jl")')).to.equal(true);
    });
 
    it('exec include',function(done)

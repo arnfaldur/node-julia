@@ -77,14 +77,9 @@ function _compat(ex::Symbol)
 end
 _compat(ex) = ex
 
-if VERSION < v"0.4.0-dev+1387"
-    typealias AbstractString String
-    export AbstractString
-end
-
 #--------- end compat.jl lifting ----------
 
-preserve = Array(Any,0);
+preserve = Array{Any}(0);
 
 function topExpr(mod::Module,paths::Array{ASCIIString,1})
    res = Expr(:toplevel,:(eval(x) = Core.eval(mod,x)),:(eval(m,x) = Core.eval(m,x)))
