@@ -441,7 +441,7 @@ describe('Regression Tests',function()
 
    it('array of null',function()
    {
-      expect(julia.eval('Array(Void,2,2)')).to.eql([[null,null],[null,null]]);
+      expect(julia.eval('Array{Void}(2,2)')).to.eql([[null,null],[null,null]]);
    });
 
    it('array of elementwise conversion from SubString to String',function()

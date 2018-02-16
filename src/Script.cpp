@@ -44,7 +44,7 @@ nj::Result nj::Script::eval(vector<shared_ptr<nj::Value>> &args,int64_t exprId)
    {
       string isoName = string("njIsoMod") + to_string(modNum++);
       jl_sym_t *isoSym = jl_symbol(isoName.c_str());
-      jl_module_t *isoMod = (jl_module_t*)jl_new_module(isoSym);
+      jl_module_t *isoMod = jl_new_module(isoSym);
 
       jl_ex = jl_exception_occurred();
       if(jl_ex) return exceptionResult(jl_ex,exprId);

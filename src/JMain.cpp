@@ -102,7 +102,9 @@ void JMain::operator()()
       jl_options.handle_signals = JL_OPTIONS_HANDLE_SIGNALS_OFF;
       #endif
 #if linux
-       jl_init();
+       julia_init(JL_IMAGE_JULIA_HOME);
+//       jl_init_with_image(JULIA_LIB, jl_get_default_sysimg_path());
+//       jl_init();
 #endif
 #ifdef WIN32
        jl_init_with_image(JULIA_LIB, "sys.dll");

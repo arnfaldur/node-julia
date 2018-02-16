@@ -25,7 +25,7 @@
         "V8MAJOR":"<!(node tools/nodev.js major)",
         "V8MINOR":"<!(node tools/nodev.js minor)",
         "V8PATCH":"<!(node tools/nodev.js patch)",
-        "JULIA_LIB":"<!(python tools/nj_config.py <(OS) julia_lib_define)",
+        "JULIA_LIB":"<!(python tools/nj_config.py <(OS) julia_lib)",
         "conditions":
         [
           [ "gcc=='4.6'", { "std":"c++0x" } , { "std":"c++11" } ],
@@ -128,7 +128,7 @@
              {
               "libraries": [ "-llibjulia" ]
              }
-		       ],
+           ],
          ]
       },
       "conditions":

@@ -37,7 +37,7 @@ JuliaExecEnv::JuliaExecEnv()
 // to global scope.
 
 #if linux
-   (void)dlopen("/usr/lib/libjulia.so",RTLD_GLOBAL|RTLD_NOW);
+   (void)dlopen(JULIA_LIB "libjulia.so",RTLD_GLOBAL|RTLD_NOW);
 #endif
 
    engine = new JMain();

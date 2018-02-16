@@ -81,7 +81,7 @@ _compat(ex) = ex
 
 preserve = Array{Any}(0);
 
-function topExpr(mod::Module,paths::Array{ASCIIString,1})
+function topExpr(mod::Module,paths::Array{String,1})
    res = Expr(:toplevel,:(eval(x) = Core.eval(mod,x)),:(eval(m,x) = Core.eval(m,x)))
    for path in paths
       push!(res.args,:(include($path)))
@@ -89,14 +89,14 @@ function topExpr(mod::Module,paths::Array{ASCIIString,1})
    return res;
 end
 
-include(mod::Module,path,args::Vector) = include(mod,path,UTF8String[args...])
+include(mod::Module,path,args::Vector) = include(mod,path,String[args...])
 @vLT "0.5.0-dev+2300" readAllFromFile(filename) = readall(filename)
 @vGE "0.5.0-dev+2300" readAllFromFile(filename) = readstring(filename)
 
-function scriptify(mod::Module,filename::ASCIIString)
+function scriptify(mod::Module,filename::String)
     ast = parse("function _(args...)\n" * readAllFromFile(filename) * "end");
-    args2 = Array(Any,0);
-    paths = Array(ASCIIString,0);
+    args2 = Array{Any}(0);
+    paths = Array{String}(0);
 
     for astNode in ast.args[2].args
        if(typeof(astNode) == Expr && astNode.head == :call && astNode.args[1] == :include)
@@ -128,7 +128,7 @@ end
 function getError(ex,bt)
    io = IOBuffer();
    Base.showerror(io,ex,bt);
-   s = takebuf_string(io);
+   s = String(take!(io));
    return s;
 end
 
@@ -141,14 +141,14 @@ end
 #  This can be removed once the issue is resolved in base.
 
 @vers04orGreater_only function pwd()
-    b = Array(UInt8,1024)
+    b = Array{UInt8}(1024)
     len = Csize_t[length(b),]
     Base.uv_error(:getcwd, ccall((:uv_cwd,"libjulia"), Cint, (Ptr{UInt8}, Ptr{Csize_t}), b, len))
     bytestring(b[1:len[1]-1])
 end
 
 @vers03x_only function pwd()
-    b = Array(Uint8,1024)
+    b = Array{Uint8}(1024)
     len = Csize_t[length(b),]
     Base.uv_error(:getcwd, ccall((:uv_cwd,"libjulia"), Cint, (Ptr{Uint8}, Ptr{Csize_t}), b, len))
     bytestring(b[1:len[1]-1])
@@ -164,16 +164,16 @@ abspath(a::AbstractString, b::AbstractString...) = abspath(joinpath(a,b...))
 
 # Cross-platform case-sensitive path canonicalization
 
-if OS_NAME ∈ (:Linux, :FreeBSD)
+if Sys.KERNEL ∈ (:Linux, :FreeBSD)
     # Case-sensitive filesystems, don't have to do anything
     isfile_casesensitive(path) = isfile(path)
-elseif OS_NAME == :Windows
+elseif Sys.KERNEL == :Windows
     # GetLongPathName Win32 function returns the case-preserved filename on NTFS.
     function isfile_casesensitive(path)
         isfile(path) || return false  # Fail fast
         Filesystem.longpath(path) == path
     end
-elseif OS_NAME == :Darwin
+elseif Sys.KERNEL == :Darwin
     # HFS+ filesystem is case-preserving. The getattrlist API returns
     # a case-preserved filename. In the rare event that HFS+ is operating
     # in case-sensitive mode, this will still work but will be redundant.
@@ -207,7 +207,7 @@ elseif OS_NAME == :Darwin
         path_basename = bytestring(basename(path))
         local casepreserved_basename
         const header_size = 12
-        buf = Array(UInt8, length(path_basename) + header_size + 1)
+        buf = Array{UInt8}( length(path_basename) + header_size + 1)
         while true
             ret = ccall(:getattrlist, Cint,
                         (Cstring, Ptr{Void}, Ptr{Void}, Csize_t, Culong),
@@ -297,7 +297,7 @@ function _include_from_serialized(content::Vector{UInt8})
 end
 
 # returns an array of modules loaded, or nothing if failed
-function _require_from_serialized(node::Int, mod::Symbol, path_to_try::ByteString, toplevel_load::Bool)
+function _require_from_serialized(node::Int, mod::Symbol, path_to_try::String, toplevel_load::Bool)
     if Base.JLOptions().use_compilecache == 0
         return nothing
     end
@@ -364,7 +364,7 @@ end
 const package_locks = Dict{Symbol,Condition}()
 
 # used to optionally track dependencies when requiring a module:
-const _require_dependencies = Tuple{ByteString,Float64}[]
+const _require_dependencies = Tuple{String,Float64}[]
 const _track_dependencies = [false]
 function _include_dependency(_path::AbstractString)
     prev = source_path(nothing)
@@ -528,7 +528,7 @@ end
 
 # remote/parallel load
 
-include_string(txt::ByteString, fname::ByteString) =
+include_string(txt::String, fname::String) =
     ccall(:jl_load_file_string, Any, (Ptr{UInt8},Csize_t,Ptr{UInt8},Csize_t),
           txt, sizeof(txt), fname, sizeof(fname))
 
@@ -589,7 +589,7 @@ function include_from_node1(_path::AbstractString)
     result
 end
 
-function evalfile(path::AbstractString, args::Vector{UTF8String}=UTF8String[])
+function evalfile(path::AbstractString, args::Vector{String}=String[])
     return eval(Module(:__anon__),
                 Expr(:toplevel,
                      :(const ARGS = $args),
@@ -597,7 +597,7 @@ function evalfile(path::AbstractString, args::Vector{UTF8String}=UTF8String[])
                      :(eval(m,x) = Main.Core.eval(m,x)),
                      :(Main.Base.include($path))))
 end
-evalfile(path::AbstractString, args::Vector) = evalfile(path, UTF8String[args...])
+evalfile(path::AbstractString, args::Vector) = evalfile(path, String[args...])
 
 function create_expr_cache(input::AbstractString, output::AbstractString)
     rm(output, force=true)   # Remove file if it exists
@@ -643,7 +643,7 @@ function create_expr_cache(input::AbstractString, output::AbstractString)
 end
 
 compilecache(mod::Symbol) = compilecache(string(mod))
-function compilecache(name::ByteString)
+function compilecache(name::String)
     myid() == 1 || error("can only precompile from node 1")
     path = find_in_path(name, nothing)
     path === nothing && throw(ArgumentError("$name not found in path"))
@@ -664,7 +664,7 @@ isvalid_cache_header(f::IOStream) = 0 != ccall(:jl_deserialize_verify_header, Ci
 
 function cache_dependencies(f::IO)
     modules = Tuple{Symbol,UInt64}[]
-    files = Tuple{ByteString,Float64}[]
+    files = Tuple{String,Float64}[]
     while true
         n = ntoh(read(f, Int32))
         n == 0 && break
@@ -737,7 +737,7 @@ end
 # End loading.jl inclusion
 
 
-function importModule(modulePath::ASCIIString)
+function importModule(modulePath::String)
    separator = "/";
    try
       separator = Base.path_separator
@@ -758,7 +758,7 @@ function importModule(modulePath::ASCIIString)
       require(mod);
    end
 
-   functionNames::Array{UTF8String,1} = Array(UTF8String,0);
+   functionNames::Array{String,1} = Array{String}(0);
    m::Module = Base.eval(Main,mod);
 
    for name in names(m)
